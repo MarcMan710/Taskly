@@ -13,41 +13,44 @@ const getTasks = asyncHandler(async (req, res) => {
 // @desc    Create a new task
 // @route   POST /api/tasks
 // @access  Private
+// backend/controllers/taskController.js
 const createTask = asyncHandler(async (req, res) => {
-    const { title, description } = req.body;
+  const { title, description, status } = req.body;
 
-    if (!title) {
-        return res.status(400).json({ message: "Title is required" });
-    }
+  if (!title) {
+    return res.status(400).json({ message: "Title is required" });
+  }
 
-    const task = await Task.create({
-        user: req.user.id,
-        title,
-        description,
-    });
+  const task = await Task.create({
+    user: req.user.id,
+    title,
+    description,
+    status,
+  });
 
-    res.status(201).json(task);
+  res.status(201).json(task);
 });
 
 // @desc    Update a task
 // @route   PUT /api/tasks/:id
 // @access  Private
+// backend/controllers/taskController.js
 const updateTask = asyncHandler(async (req, res) => {
-    const task = await Task.findById(req.params.id);
+  const task = await Task.findById(req.params.id);
 
-    if (!task) {
-        return res.status(404).json({ message: "Task not found" });
-    }
+  if (!task) {
+    return res.status(404).json({ message: "Task not found" });
+  }
 
-    if (task.user.toString() !== req.user.id) {
-        return res.status(401).json({ message: "Not authorized" });
-    }
+  if (task.user.toString() !== req.user.id) {
+    return res.status(401).json({ message: "Not authorized" });
+  }
 
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-    });
+  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
 
-    res.json(updatedTask);
+  res.json(updatedTask);
 });
 
 // @desc    Delete a task
